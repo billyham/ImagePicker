@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Codepen Test</title>
+    <link rel="stylesheet" href="./styles.css"></link>
+    <meta name="viewport"content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div>
+
+      <!-- |======================= Image & Crop =========================== -->
+      <div class="image-container image-initial-size">
+
+        <!-- ==|======================= Crop =============================== -->
+        <div class="image-item"
+            onmousedown="event.preventDefault(); event.stopPropagation(); interactionStart(event)"
+            onmousemove="event.preventDefault(); event.stopPropagation(); interactionMove(event)"
+            onmouseup="interactionEnd(event)"
+            onmouseleave="interactionCancel(event)"
+            ontouchstart="event.preventDefault(); event.stopPropagation(); interactionStart(event)"
+            ontouchmove="event.preventDefault(); event.stopPropagation(); interactionMove(event)"
+            ontouchend="interactionEnd(event)"
+            ontouchcancel="interactionCancel(event)">
+          <canvas id="canvas-image" class="image-item canvas-image image-initial-size"></canvas>
+          <canvas id="canvas-overlay" class="image-item canvas-overlay image-initial-size"></canvas>
+        </div>
+
+        <!-- ==|======================= Image ============================== -->
+        <div id="image-drop-zone" class="addimage image-item"
+          ondragenter="event.stopPropagation(); event.preventDefault();"
+          ondragover="event.stopPropagation(); event.preventDefault();"
+          ondrop="event.preventDefault(); event.stopPropagation(); onDrop(event);">
+          <p>Drag and drop a JPEG or PNG image file</p>
+          <p id="px-warning" class="text__warning hide">Image needs to be at least 440px by 440px</p>
+        </div>
+
+      </div>
+
+      <!-- |=========================== Buttons ============================ -->
+      <input id="123" type="file" name="file" class="file" onchange="onChange(this.files)">
+      </input><br>
+      <button type="button" onclick="clearImage()">Clear Image</button>
+      <button type="submit" onclick="submitRequest()">Submit
+      </button>
+    </div>
+    <script src="./script.js" type="text/javascript"></script>
+  </body>
+</html>
