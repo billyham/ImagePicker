@@ -38,11 +38,18 @@
       </div>
 
       <!-- |=========================== Buttons ============================ -->
-      <input id="123" type="file" name="file" class="file" onchange="onChange(this.files)">
-      </input><br>
-      <button type="button" onclick="clearImage()">Clear Image</button>
-      <button type="submit" onclick="submitRequest()">Submit
-      </button>
+      <div class="__centered">
+        <input id="123" type="file" name="file" class="file" onchange="onChange(this.files)">
+        </input><br>
+        <button type="button" onclick="clearImage()">Clear Image</button>
+        <button type="submit" onclick="submitRequest()">Submit
+        </button>
+      </div>
+
+      <!-- |======================= Processed Image ======================== -->
+      <div id="target" class="__centered">
+      </div>
+
     </div>
     <script src="./script.js" type="text/javascript"></script>
   </body>

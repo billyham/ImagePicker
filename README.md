@@ -1,1 +1,1 @@
-##A simple image picker with croppping. No additional libraries needed. 
+##A simple image picker with cropping. No additional libraries needed. 

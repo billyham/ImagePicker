@@ -56,3 +56,8 @@ p {
 .text__warning{
   color: hsl(1, 100%, 60%);
 }
+
+.__centered{
+  width: 320px;
+  margin: auto auto
+}

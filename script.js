@@ -6,13 +6,13 @@
   const initialWidth = 220;
   const initialHeight = 220;
 
-  // Use finalWidth and Height to set the target pixel dimensions for the
+  // Use targetWidth and targetHeight to set the target pixel dimensions for the
   // file that is rendered and ready for upload to a database, etc.
   // These values also define the minimum size, imagePicker will respond with
   // an error message if the chosen file has a width or height less than the
   // following value.
-  const finalWidth = 440;
-  const finalHeight = 440;
+  const targetWidth = 500;
+  const targetHeight = 500;
 
   // =========================== Event Handlers ============================= //
   // Mouse & Touch events
@@ -57,7 +57,7 @@
   var _imageType = '';
 
 
-  // ============================== Functions =============================== //
+  // ========================= Function Definitions ========================= //
   function interactionStart(event){
     _isEditing = true;
     _initialPointerX = event.pageX;
@@ -113,6 +113,13 @@
     filePath.value = '';
     _applyImage();
 
+    // Clear Proof of Concept div
+    const targetNode = document.getElementById('target');
+    const children = targetNode.childNodes;
+    for (let i = children.length; i > 0; i--){
+      targetNode.removeChild(targetNode.childNodes.item(i - 1));
+    }
+
     // Show image drop zone
     const dropZone = document.getElementById('image-drop-zone');
     dropZone.className = 'addimage image-item';
@@ -142,6 +149,23 @@
     // TODO: Provide UI sprite to indicate progress
 
     // TODO: Do stuff with final image
+
+    // Proof of concept
+    // Remove any existing images
+    const targetNode = document.getElementById('target');
+    const children = targetNode.childNodes;
+    for (let i = children.length; i > 0; i--){
+      targetNode.removeChild(targetNode.childNodes.item(i - 1));
+    }
+    // Add full size image
+    const imageForPoC = new Image();  // targetWidth, targetHeight
+    const blobForPoC = new Blob([_croppedImageData], { type: 'image/png' });
+    imageForPoC.src = window.URL.createObjectURL(blobForPoC);
+    imageForPoC.onload = function(){
+      // Draw the image canvas
+      targetNode.appendChild(imageForPoC);
+      window.URL.revokeObjectURL(imageForPoC.src);
+    };
   }
 
   function applyImage() {
@@ -166,7 +190,7 @@
 
     // Guard against images that are too small
     if (_rawWidth === 0 && _rawHeight === 0) console.log('failed to read image dimensions');
-    if (_rawWidth < 440 || _rawHeight < 440){
+    if (_rawWidth < targetWidth || _rawHeight < targetHeight){
       clearImage();
       _setSizeAlert(true);
       return;
@@ -178,7 +202,7 @@
     const big = landscape ? _rawWidth : _rawHeight;
     const small = landscape ? _rawHeight : _rawWidth;
     aspectRatio = big / small;
-    _resizeRatio = landscape ? _rawHeight / 440 : _rawWidth / 440;
+    _resizeRatio = landscape ? _rawHeight / targetHeight : _rawWidth / targetWidth;
 
     const finalWidth = landscape ? _canvasWidth * aspectRatio : _canvasWidth;
     const finalHeight = landscape ? _canvasHeight : _canvasHeight * aspectRatio ;
@@ -222,6 +246,7 @@
   function setSizeAlert(showAlert){
     let classes = showAlert ? 'text__warning' : 'text__warning hide';
     let alertText = document.getElementById('px-warning');
+    alertText.textContent = `Image needs to be at least ${targetWidth}px by ${targetHeight}px`;
     alertText.className = classes;
   }
 
@@ -268,14 +293,14 @@
     ctx.fillRect(landscape ? _currentX + cropHalf : 0, landscape ? 0 : _currentY + cropHalf, canvas.width, canvas.height);
 
     // Save original at full size resolution
-    _overlayOriginX = (_currentX - cropHalf) * 2;
-    _overlayOriginY = (_currentY - cropHalf) * 2;
+    _overlayOriginX = (_currentX - cropHalf) * (targetWidth / initialWidth);
+    _overlayOriginY = (_currentY - cropHalf) * (targetHeight / initialHeight);
   }
 
   function drawCroppedCanvas(){
     const croppedCanvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
-    croppedCanvas.width = 440;
-    croppedCanvas.height = 440;
+    croppedCanvas.width = targetWidth;
+    croppedCanvas.height = targetHeight;
 
     const imageForDraw = new Image();
     const blobForDraw = new Blob([_imageData], { type: _imageType });
@@ -287,12 +312,12 @@
         imageForDraw,
         _overlayOriginX * _resizeRatio,
         _overlayOriginY * _resizeRatio,
-        440 * _resizeRatio,
-        440 * _resizeRatio,
+        targetWidth * _resizeRatio,
+        targetHeight * _resizeRatio,
         0,
         0,
-        440,
-        440
+        targetWidth,
+        targetHeight
       );
       // Convert Canvas -> Blob -> ArrayBuffer
       // toBlob() is NOT available in Safari / WebKit.  Polyfill courtesy of:
