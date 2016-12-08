@@ -1,18 +1,19 @@
 (function(module){
 
   // ================================ Config ================================ //
-  // Use initiaWidth and Height to set the pixel dimenions of the
-  // Image picker box to receive the drag and drop action.
-  const initialWidth = 220;
-  const initialHeight = 220;
-
   // Use targetWidth and targetHeight to set the target pixel dimensions for the
   // file that is rendered and ready for upload to a database, etc.
   // These values also define the minimum size, imagePicker will respond with
   // an error message if the chosen file has a width or height less than the
   // following value.
-  const targetWidth = 500;
-  const targetHeight = 500;
+  const targetWidth = 400;
+  const targetHeight = 250;
+
+  // Use initiaWidth to set the onscreen pixel dimensions of the
+  // Image picker box to receive the drag and drop action.
+  const initialWidth = 300;
+  // initialHeight will be equal to targetHeight multplied by the ratio:
+  // initialWidth / targetWidth/
 
   // =========================== Event Handlers ============================= //
   // Mouse & Touch events
@@ -38,6 +39,7 @@
   const _getImageSize = getImageSize;
 
   // ================================= Init ================================= //
+  const initialHeight = targetHeight * initialWidth / targetWidth;
   var _canvasWidth = initialWidth;
   var _canvasHeight = initialHeight;
   var _isEditing = false;
@@ -55,6 +57,9 @@
   var _imageData = null;
   var _croppedImageData = null;
   var _imageType = '';
+
+  // Alter size of HTML elements to config settings
+  _setSize(initialWidth, initialHeight);
 
 
   // ========================= Function Definitions ========================= //
@@ -146,8 +151,6 @@
   function submitRequest(){
     if (!_croppedImageData) return;
 
-    // TODO: Provide UI sprite to indicate progress
-
     // TODO: Do stuff with final image
 
     // Proof of concept
@@ -197,15 +200,22 @@
     }
 
     // Identify the resize-ratio and aspect ratio
+    const initialAspectRatio = initialWidth / initialHeight;
+
     let aspectRatio = 1;
-    let landscape = _rawWidth >= _rawHeight;
+
+    // let landscape = _rawWidth >= _rawHeight;
+    let landscape = _rawWidth / _rawHeight >= initialWidth / initialHeight;
+
     const big = landscape ? _rawWidth : _rawHeight;
     const small = landscape ? _rawHeight : _rawWidth;
     aspectRatio = big / small;
+
     _resizeRatio = landscape ? _rawHeight / targetHeight : _rawWidth / targetWidth;
 
-    const finalWidth = landscape ? _canvasWidth * aspectRatio : _canvasWidth;
-    const finalHeight = landscape ? _canvasHeight : _canvasHeight * aspectRatio ;
+    // TODO: change _canvasWidth to initialWidth, etc
+    const finalWidth = landscape ? _canvasWidth * aspectRatio / initialAspectRatio : _canvasWidth;
+    const finalHeight = landscape ? _canvasHeight : _canvasHeight * aspectRatio * initialAspectRatio;
 
     // Adjust elements to new size
     _setSize(finalWidth, finalHeight);
@@ -253,8 +263,8 @@
   // Crop overlay canvas
   function drawOverlay(event){
     // The crop box size
-    const cropSize = 220;
-    const cropHalf = cropSize / 2;
+    const cropSize = { width: initialWidth, height: initialHeight };
+    const cropHalf = { width: cropSize.width / 2, height: cropSize.height / 2 };
 
     const canvas = document.getElementById('canvas-overlay');
     canvas.width = _canvasWidth;
@@ -276,25 +286,25 @@
     }
 
     // Keep overlay rect in the frame
-    if (_currentX < cropHalf) _currentX = cropHalf;
-    if (_currentX > _canvasWidth - cropHalf) _currentX = _canvasWidth - cropHalf;
-    if (_currentY < cropHalf) _currentY = cropHalf;
-    if (_currentY > _canvasHeight - cropHalf) _currentY = _canvasHeight - cropHalf;
+    if (_currentX < cropHalf.width) _currentX = cropHalf.width;
+    if (_currentX > _canvasWidth - cropHalf.width) _currentX = _canvasWidth - cropHalf.width;
+    if (_currentY < cropHalf.height) _currentY = cropHalf.height;
+    if (_currentY > _canvasHeight - cropHalf.height) _currentY = _canvasHeight - cropHalf.height;
 
     // Draw cropping frame
     var ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = 'white';
-    ctx.strokeRect(_currentX - cropHalf, _currentY - cropHalf, cropSize, cropSize);
+    ctx.strokeRect(_currentX - cropHalf.width, _currentY - cropHalf.height, cropSize.width, cropSize.height);
     // Draw semi-transparent overlay outside the crop rect
     let landscape = _rawWidth >= _rawHeight;
     ctx.fillStyle = 'hsla(1, 1%, 1%, 0.4)';
-    ctx.fillRect(0, 0, landscape ? _currentX - cropHalf : _canvasWidth, landscape ? _canvasHeight : _currentY - cropHalf);
-    ctx.fillRect(landscape ? _currentX + cropHalf : 0, landscape ? 0 : _currentY + cropHalf, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, landscape ? _currentX - cropHalf.width : _canvasWidth, landscape ? _canvasHeight : _currentY - cropHalf.height);
+    ctx.fillRect(landscape ? _currentX + cropHalf.width : 0, landscape ? 0 : _currentY + cropHalf.height, canvas.width, canvas.height);
 
     // Save original at full size resolution
-    _overlayOriginX = (_currentX - cropHalf) * (targetWidth / initialWidth);
-    _overlayOriginY = (_currentY - cropHalf) * (targetHeight / initialHeight);
+    _overlayOriginX = (_currentX - cropHalf.width) * (targetWidth / initialWidth);
+    _overlayOriginY = (_currentY - cropHalf.height) * (targetHeight / initialHeight);
   }
 
   function drawCroppedCanvas(){

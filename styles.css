@@ -10,8 +10,7 @@ p {
 }
 
 .image-container{
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 1em;
 }
 
 .image-initial-size{
@@ -34,12 +33,10 @@ p {
 }
 
 .addimage{
-  width: 220px;
-  height: 220px;
   background-color: hsl(200, 20%, 30%);
   border: 2px dashed white;
   border-radius: 4px;
-  padding: .5em;
+  padding: 0;
   color: white;
   font-size: 80%;
   text-align: center;
@@ -59,5 +56,5 @@ p {
 
 .__centered{
   width: 320px;
-  margin: auto auto
+  margin: 0 auto;
 }

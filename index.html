@@ -12,7 +12,7 @@
       <!-- |======================= Image & Crop =========================== -->
       <div class="image-container image-initial-size">
 
-        <!-- ==|======================= Crop =============================== -->
+        <!-- ==|===================== Canvases ============================= -->
         <div class="image-item"
             onmousedown="event.preventDefault(); event.stopPropagation(); interactionStart(event)"
             onmousemove="event.preventDefault(); event.stopPropagation(); interactionMove(event)"
@@ -26,8 +26,8 @@
           <canvas id="canvas-overlay" class="image-item canvas-overlay image-initial-size"></canvas>
         </div>
 
-        <!-- ==|======================= Image ============================== -->
-        <div id="image-drop-zone" class="addimage image-item"
+        <!-- ==|===================== Drop Zone ============================ -->
+        <div id="image-drop-zone" class="addimage image-item image-initial-size"
           ondragenter="event.stopPropagation(); event.preventDefault();"
           ondragover="event.stopPropagation(); event.preventDefault();"
           ondrop="event.preventDefault(); event.stopPropagation(); onDrop(event);">
@@ -41,7 +41,7 @@
       <div class="__centered">
         <input id="123" type="file" name="file" class="file" onchange="onChange(this.files)">
         </input><br>
-        <button type="button" onclick="clearImage()">Clear Image</button>
+        <button type="button" onclick="clearImage()">Clear Image</button><br>
         <button type="submit" onclick="submitRequest()">Submit
         </button>
       </div>
