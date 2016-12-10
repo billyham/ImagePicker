@@ -1,29 +1,31 @@
 (function(module){
 
   // ================================ Config ================================ //
-  // Use targetWidth and targetHeight to set the target pixel dimensions for the
-  // file that is rendered and ready for upload to a database, etc.
+  // In pixels
+  // Use _renderedImageWidth and _renderedImageHeight to set the target pixel dimensions
+  // for the file that is rendered and ready for upload to a database, etc.
   // These values also define the minimum size, imagePicker will respond with
   // an error message if the chosen file has a width or height less than the
-  // following value.
-  const targetWidth = 400;
-  const targetHeight = 250;
+  // following values.
+  const _renderedImageWidth = 440;
+  const _renderedImageHeight = 440;
 
-  // Use initiaWidth to set the onscreen pixel dimensions of the
-  // Image picker box to receive the drag and drop action.
-  const initialWidth = 300;
-  // initialHeight will be equal to targetHeight multplied by the ratio:
-  // initialWidth / targetWidth/
+  // In pixels
+  // Use _previewImageWidth to set the onscreen pixel dimensions of the
+  // Imagepicker box to receive the drag and drop action.
+  // _previewImageHeight will be equal to _renderedImageHeight multplied by the ratio:
+  // _previewImageWidth / _renderedImageWidth
+  const _previewImageWidth = 220;
 
-  // =========================== Event Handlers ============================= //
+// =========================== Event Handlers ============================= //
+  // Drag events
+  module.onDrop = onDrop;
+
   // Mouse & Touch events
   module.interactionStart = interactionStart;
   module.interactionMove = interactionMove;
   module.interactionEnd = interactionEnd;
   module.interactionCancel = interactionCancel;
-
-  // Drag events
-  module.onDrop = onDrop;
 
   // Input & Button events
   module.clearImage = clearImage;
@@ -39,9 +41,9 @@
   const _getImageSize = getImageSize;
 
   // ================================= Init ================================= //
-  const initialHeight = targetHeight * initialWidth / targetWidth;
-  var _canvasWidth = initialWidth;
-  var _canvasHeight = initialHeight;
+  const _previewImageHeight = _renderedImageHeight * _previewImageWidth / _renderedImageWidth;
+  var _canvasWidth = _previewImageWidth;
+  var _canvasHeight = _previewImageHeight;
   var _isEditing = false;
   var _overlayOriginX = 0;
   var _overlayOriginY = 0;
@@ -59,10 +61,22 @@
   var _imageType = '';
 
   // Alter size of HTML elements to config settings
-  _setSize(initialWidth, initialHeight);
+  _setSize(_previewImageWidth, _previewImageHeight);
 
 
   // ========================= Function Definitions ========================= //
+  function onDrop(evnt) {
+    evnt.stopPropagation();
+    evnt.preventDefault();
+    if (evnt.dataTransfer.files.length < 1) return;
+
+    // TODO: Do something with the file name
+    // evnt.dataTransfer.files[0].name;
+    _imageType = evnt.dataTransfer.files[0].type;
+
+    onChange(evnt.dataTransfer.files);
+  };
+
   function interactionStart(event){
     _isEditing = true;
     _initialPointerX = event.pageX;
@@ -95,18 +109,6 @@
     _previousX = _currentX;
     _previousY = _currentY;
   }
-
-  function onDrop(evnt) {
-    evnt.stopPropagation();
-    evnt.preventDefault();
-    if (evnt.dataTransfer.files.length < 1) return;
-
-    // TODO: Do something with the file name
-    // evnt.dataTransfer.files[0].name;
-    _imageType = evnt.dataTransfer.files[0].type;
-
-    onChange(evnt.dataTransfer.files);
-  };
 
   function clearImage(){
     _imageData = null;
@@ -153,15 +155,14 @@
 
     // TODO: Do stuff with final image
 
-    // Proof of concept
-    // Remove any existing images
+    // Proof of concept: render image to the screen at full size
     const targetNode = document.getElementById('target');
     const children = targetNode.childNodes;
     for (let i = children.length; i > 0; i--){
       targetNode.removeChild(targetNode.childNodes.item(i - 1));
     }
     // Add full size image
-    const imageForPoC = new Image();  // targetWidth, targetHeight
+    const imageForPoC = new Image();  // _renderedImageWidth, _renderedImageHeight
     const blobForPoC = new Blob([_croppedImageData], { type: 'image/png' });
     imageForPoC.src = window.URL.createObjectURL(blobForPoC);
     imageForPoC.onload = function(){
@@ -172,7 +173,7 @@
   }
 
   function applyImage() {
-    _setSize(initialWidth, initialHeight);
+    _setSize(_previewImageWidth, _previewImageHeight);
     _rawWidth = _rawHeight = 0;
 
     if (!_imageData) return;
@@ -193,31 +194,31 @@
 
     // Guard against images that are too small
     if (_rawWidth === 0 && _rawHeight === 0) console.log('failed to read image dimensions');
-    if (_rawWidth < targetWidth || _rawHeight < targetHeight){
+    if (_rawWidth < _renderedImageWidth || _rawHeight < _renderedImageHeight){
       clearImage();
       _setSizeAlert(true);
       return;
     }
 
     // Identify the resize-ratio and aspect ratio
-    const initialAspectRatio = initialWidth / initialHeight;
+    const initialAspectRatio = _previewImageWidth / _previewImageHeight;
 
     let aspectRatio = 1;
 
     // let landscape = _rawWidth >= _rawHeight;
-    let landscape = _rawWidth / _rawHeight >= initialWidth / initialHeight;
+    let landscape = _rawWidth / _rawHeight >= _previewImageWidth / _previewImageHeight;
 
     const big = landscape ? _rawWidth : _rawHeight;
     const small = landscape ? _rawHeight : _rawWidth;
     aspectRatio = big / small;
 
-    _resizeRatio = landscape ? _rawHeight / targetHeight : _rawWidth / targetWidth;
+    _resizeRatio = landscape ? _rawHeight / _renderedImageHeight : _rawWidth / _renderedImageWidth;
 
-    // TODO: change _canvasWidth to initialWidth, etc
+    // TODO: change _canvasWidth to _previewImageWidth, etc
     const finalWidth = landscape ? _canvasWidth * aspectRatio / initialAspectRatio : _canvasWidth;
     const finalHeight = landscape ? _canvasHeight : _canvasHeight * aspectRatio * initialAspectRatio;
 
-    // Adjust elements to new size
+    // Adjust HTML elements to new size
     _setSize(finalWidth, finalHeight);
 
     const imageForDraw = new Image(finalWidth, finalHeight);
@@ -256,14 +257,14 @@
   function setSizeAlert(showAlert){
     let classes = showAlert ? 'text__warning' : 'text__warning hide';
     let alertText = document.getElementById('px-warning');
-    alertText.textContent = `Image needs to be at least ${targetWidth}px by ${targetHeight}px`;
+    alertText.textContent = `Image needs to be at least ${_renderedImageWidth}px by ${_renderedImageHeight}px`;
     alertText.className = classes;
   }
 
   // Crop overlay canvas
   function drawOverlay(event){
     // The crop box size
-    const cropSize = { width: initialWidth, height: initialHeight };
+    const cropSize = { width: _previewImageWidth, height: _previewImageHeight };
     const cropHalf = { width: cropSize.width / 2, height: cropSize.height / 2 };
 
     const canvas = document.getElementById('canvas-overlay');
@@ -303,14 +304,14 @@
     ctx.fillRect(landscape ? _currentX + cropHalf.width : 0, landscape ? 0 : _currentY + cropHalf.height, canvas.width, canvas.height);
 
     // Save original at full size resolution
-    _overlayOriginX = (_currentX - cropHalf.width) * (targetWidth / initialWidth);
-    _overlayOriginY = (_currentY - cropHalf.height) * (targetHeight / initialHeight);
+    _overlayOriginX = (_currentX - cropHalf.width) * (_renderedImageWidth / _previewImageWidth);
+    _overlayOriginY = (_currentY - cropHalf.height) * (_renderedImageHeight / _previewImageHeight);
   }
 
   function drawCroppedCanvas(){
     const croppedCanvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
-    croppedCanvas.width = targetWidth;
-    croppedCanvas.height = targetHeight;
+    croppedCanvas.width = _renderedImageWidth;
+    croppedCanvas.height = _renderedImageHeight;
 
     const imageForDraw = new Image();
     const blobForDraw = new Blob([_imageData], { type: _imageType });
@@ -322,12 +323,12 @@
         imageForDraw,
         _overlayOriginX * _resizeRatio,
         _overlayOriginY * _resizeRatio,
-        targetWidth * _resizeRatio,
-        targetHeight * _resizeRatio,
+        _renderedImageWidth * _resizeRatio,
+        _renderedImageHeight * _resizeRatio,
         0,
         0,
-        targetWidth,
-        targetHeight
+        _renderedImageWidth,
+        _renderedImageHeight
       );
       // Convert Canvas -> Blob -> ArrayBuffer
       // toBlob() is NOT available in Safari / WebKit.  Polyfill courtesy of:
@@ -378,9 +379,11 @@
 
           // APP1 Marker (EXIF)
           if (dataV.getUint8(x+1) === 225){
-            if (dataV.getUint32(x+4) !== 1165519206) continue; // Check EXIF header marker or APP1 Marker was false positive
-            // console.log('Intel will be 73 73:', dataV.getUint8(x+10), dataV.getUint8(x+11));  // Intel byte align
-            // console.log('Motorola will be 77 77:', dataV.getUint8(x+10), dataV.getUint8(x+11)); // Motorola byte align
+            // Check if EXIF header marker or APP1 Marker was false positive
+            if (dataV.getUint32(x+4) !== 1165519206) continue;
+
+            // 73 73: Intel byte align uses little endian
+            // 77 77: Motorola byte align uses big endian
             let isIntelAlign = false;
             if (dataV.getUint8(x+10) === 73 && dataV.getUint8(x+11) === 73) isIntelAlign = true;
 
@@ -391,7 +394,7 @@
             //   2 bytes for tag number
             //   2 bytes for data type
             //   4 bytes for number of components
-            //   4 byts for data (or offset to data)
+            //   4 bytes for data (or offset to data)
             for (let i = 0; i < entryCount; i++){
               let tagNum = dataV.getUint16(x + 10 + offsetToFirstIFD + 2 + (i * 12), isIntelAlign)
               // 274 is orientation
