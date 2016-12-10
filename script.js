@@ -129,7 +129,7 @@
 
     // Show image drop zone
     const dropZone = document.getElementById('image-drop-zone');
-    dropZone.className = 'addimage image-item';
+    dropZone.className = 'drop-zone l-position-absolute';
   }
 
   function onChange(tryFiles){
@@ -178,9 +178,9 @@
 
     if (!_imageData) return;
 
-    // Hide image drop zone
+    // __hide image drop zone
     const imageDropZone = document.getElementById('image-drop-zone');
-    imageDropZone.className = 'hide';
+    imageDropZone.className = '__hide';
 
     const canvas = document.getElementById('canvas-image');
     var ctx = canvas.getContext('2d');
@@ -238,7 +238,7 @@
   // Set size of image canvas and container elements based on raw image size
   function setSize(setWidth, setHeight){
 
-    const collectionOfElements = document.getElementsByClassName('image-initial-size');
+    const collectionOfElements = document.getElementsByClassName('variable-size');
     for (let n = 0; n < collectionOfElements.length; n++) {
       collectionOfElements[n].style.width = `${setWidth}px`;
       collectionOfElements[n].style.height = `${setHeight}px`;
@@ -255,7 +255,7 @@
   }
 
   function setSizeAlert(showAlert){
-    let classes = showAlert ? 'text__warning' : 'text__warning hide';
+    let classes = showAlert ? '__warning' : '__warning __hide';
     let alertText = document.getElementById('px-warning');
     alertText.textContent = `Image needs to be at least ${_renderedImageWidth}px by ${_renderedImageHeight}px`;
     alertText.className = classes;

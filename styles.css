@@ -1,3 +1,4 @@
+/* ================================== Base ================================== */
 body {
   background-color: hsl(200, 20%, 10%);
   color: white;
@@ -9,17 +10,14 @@ p {
   line-height: 2;
 }
 
+/* ================================= Module ================================= */
 .image-container{
   margin: 0 auto 1em;
 }
 
-.image-initial-size{
+.variable-size{
   width: 220px;
   height: 220px;
-}
-
-.image-item{
-  position: absolute;
 }
 
 .canvas-image {
@@ -32,7 +30,7 @@ p {
   cursor: crosshair;
 }
 
-.addimage{
+.drop-zone{
   background-color: hsl(200, 20%, 30%);
   border: 2px dashed white;
   border-radius: 4px;
@@ -41,23 +39,23 @@ p {
   font-size: 80%;
   text-align: center;
   overflow: hidden;
-  
-  text-overflow: ellipsis;
 }
 
-.hide{
+/* ================================= Layout ================================= */
+.l-centered{
+  width: 320px;
+  margin: 0 auto;
+}
+
+.l-position-absolute{
+  position: absolute;
+}
+
+/* ================================= State ================================== */
+.__hide{
   display: none;
 }
 
-.dim{
-  opacity: 0.1;
-}
-
-.text__warning{
+.__warning{
   color: hsl(1, 100%, 60%);
-}
-
-.__centered{
-  width: 320px;
-  margin: 0 auto;
 }

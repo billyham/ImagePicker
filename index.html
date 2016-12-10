@@ -10,10 +10,10 @@
     <div>
 
       <!-- |======================= Image & Crop =========================== -->
-      <div class="image-container image-initial-size">
+      <div class="image-container variable-size">
 
         <!-- ==|===================== Canvases ============================= -->
-        <div class="image-item"
+        <div class="l-position-absolute"
             onmousedown="event.preventDefault(); event.stopPropagation(); interactionStart(event)"
             onmousemove="event.preventDefault(); event.stopPropagation(); interactionMove(event)"
             onmouseup="interactionEnd(event)"
@@ -22,23 +22,23 @@
             ontouchmove="event.preventDefault(); event.stopPropagation(); interactionMove(event)"
             ontouchend="interactionEnd(event)"
             ontouchcancel="interactionCancel(event)">
-          <canvas id="canvas-image" class="image-item canvas-image image-initial-size"></canvas>
-          <canvas id="canvas-overlay" class="image-item canvas-overlay image-initial-size"></canvas>
+          <canvas id="canvas-image" class="l-position-absolute canvas-image variable-size"></canvas>
+          <canvas id="canvas-overlay" class="l-position-absolute canvas-overlay variable-size"></canvas>
         </div>
 
         <!-- ==|===================== Drop Zone ============================ -->
-        <div id="image-drop-zone" class="addimage image-item image-initial-size"
+        <div id="image-drop-zone" class="drop-zone l-position-absolute variable-size"
           ondragenter="event.stopPropagation(); event.preventDefault();"
           ondragover="event.stopPropagation(); event.preventDefault();"
           ondrop="event.preventDefault(); event.stopPropagation(); onDrop(event);">
           <p>Drag and drop a JPEG or PNG image file</p>
-          <p id="px-warning" class="text__warning hide">Image needs to be at least 440px by 440px</p>
+          <p id="px-warning" class="__warning __hide">Image needs to be at least 440px by 440px</p>
         </div>
 
       </div>
 
       <!-- |=========================== Buttons ============================ -->
-      <div class="__centered">
+      <div class="l-centered">
         <input id="123" type="file" name="file" class="file" onchange="onChange(this.files)">
         </input><br>
         <button type="button" onclick="clearImage()">Clear Image</button><br>
@@ -47,7 +47,7 @@
       </div>
 
       <!-- |======================= Processed Image ======================== -->
-      <div id="target" class="__centered">
+      <div id="target" class="l-centered">
       </div>
 
     </div>
