@@ -39,10 +39,12 @@
 
       <!-- |=========================== Buttons ============================ -->
       <div class="l-centered">
-        <input id="123" type="file" name="file" class="file" onchange="onChange(this.files)">
-        </input><br>
-        <button type="button" onclick="clearImage()">Clear Image</button><br>
-        <button type="submit" onclick="submitRequest()">Submit
+        <span id="file-select"><p>Or select a file... </p> 
+          <input id="file-select-input" type="file" name="file" class="file" onchange="onChange(this.files)">
+          </input><br>
+        </span>
+        <button id="file-clear" class="__hide" type="button" onclick="clearImage()">Clear Image</button><br>
+        <button id="file-submit" class="__hide" type="submit" onclick="submitRequest()">Submit
         </button>
       </div>
 

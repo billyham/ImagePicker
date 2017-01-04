@@ -157,8 +157,12 @@
     _imageType = '';
     _setSizeAlert(false);
 
+    document.getElementById('file-submit').className = '__hide';
+    document.getElementById('file-clear').className = '__hide';
+    document.getElementById('file-select').className = '';
+
     // Clear the value of the file input HTML element
-    let filePath = document.getElementById('123');
+    let filePath = document.getElementById('file-select-input');
     filePath.value = '';
     _applyImage();
 
@@ -188,6 +192,10 @@
     if (!tryFiles || tryFiles.length < 1) return;
 
     let file = tryFiles[0];
+
+    document.getElementById('file-select').className = '__hide';
+    document.getElementById('file-submit').className = '';
+    document.getElementById('file-clear').className = '';
 
     // TODO: guard against non-image Content-Types
     _imageType = file.type;

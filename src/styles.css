@@ -41,6 +41,12 @@ p {
   overflow: hidden;
 }
 
+#file-select p{
+  margin: auto 0;
+  font-size: 80%;
+  display: inline;
+}
+
 /* ================================= Layout ================================= */
 .l-centered{
   width: 320px;
