@@ -25,7 +25,7 @@
    * multplied by the ratio: PREVIEW_IMAGE_WIDTH / RENDERED_IMAGE_WIDTH.
    * In pixels.
    */
-  const PREVIEW_IMAGE_HEIGHT  = RENDERED_IMAGE_HEIGHT * PREVIEW_IMAGE_WIDTH / RENDERED_IMAGE_WIDTH;
+  const PREVIEW_IMAGE_HEIGHT = RENDERED_IMAGE_HEIGHT * PREVIEW_IMAGE_WIDTH / RENDERED_IMAGE_WIDTH;
 
   // =========================== Event Handlers ============================= //
   // Drag events
@@ -235,7 +235,7 @@
   }
 
   /**
-   * Evaluates the aspect ration and pixel dimensions of a selected image file.
+   * Evaluates the aspect ratio and pixel dimensions of a selected image file.
    * Launches methods to draw the image onto the canvas element and draw a crop
    * frame in the overlay canvas.
    */
@@ -481,7 +481,8 @@
     const EXIF_SUB_IFD_WIDTH      = 40962;
     const EXIF_SUB_IFD_HEIGHT     = 40963;
 
-    let rawWidth = rawHeight = 0;
+    let rawWidth = 0;
+    let rawHeight = 0;
 
     const dataV = new DataView(arrayBuffer);
 
@@ -495,7 +496,8 @@
     }
 
     function subIFD(startByte, offsetToFirstIFD, i, isIntelAlign){
-      let IFDWidth = IFDHeight = 0;
+      let IFDWidth = 0;
+      let IFDHeight = 0;
       let subOffset = dataV.getUint16(startByte + 9 + offsetToFirstIFD + 2 + (i * 12) + (isIntelAlign ? 8 : 10), isIntelAlign);
 
       if (subOffset === 0) return false;
